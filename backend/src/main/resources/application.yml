@@ -1,0 +1,29 @@
+spring:
+  config:
+    import:
+      - optional:file:./.env[.properties]
+      - optional:file:../.env[.properties]
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: 8080
+
+app:
+  base-url: ${APP_BASE_URL:http://localhost:5173}
+  room-idle-hours: ${ROOM_IDLE_HOURS:12}
+  room-cleanup-interval-ms: ${ROOM_CLEANUP_INTERVAL_MS:600000}
+
+youtube:
+  api:
+    key: ${YOUTUBE_API_KEY}
+    base-url: https://www.googleapis.com/youtube/v3
+    max-results: 10
+
+logging:
+  level:
+    com.pubjukebox: DEBUG

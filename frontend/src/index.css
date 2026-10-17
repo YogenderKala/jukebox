@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design tokens ─────────────────────────────────────────────
+   Colours are space-separated RGB channels so Tailwind opacity
+   modifiers work (e.g. bg-accent/30, text-ink/60).                */
+:root {
+  --color-canvas:    251 251 251;   /* #FBFBFB off-white canvas        */
+  --color-surface:   255 255 255;   /* #FFFFFF neutral panels          */
+  --color-ink:       0 0 0;         /* #000000 text + lines            */
+  --color-muted:     85 85 85;      /* #555555 secondary text          */
+
+  --grid-size: 32px;
+
+  --radius-card:     18px;
+  --shadow-brutal:    4px 4px 0 #000000;
+  --shadow-brutal-sm: 2px 2px 0 #000000;
+}
+
+/* ── Themes ────────────────────────────────────────────────────
+   The active theme is chosen in ONE place: THEME in src/theme.js
+   (sets <html data-theme="…">). Each theme sets the accent colour;
+   the grid lines, cards, buttons and badges all derive from it.
+   To add a theme, copy a block below. Any token from :root above
+   (canvas, ink, muted, …) can be overridden here as well.        */
+:root,
+[data-theme='lime'] {
+  --color-accent: 132 255 0;      /* #84FF00 electric lime */
+  --grid-alpha: 0.25;
+}
+
+[data-theme='cyan'] {
+  --color-accent: 166 227 233;    /* #A6E3E9 soft cyan */
+  --grid-alpha: 0.55;
+}
+
+@layer base {
+  body {
+    background-color: rgb(var(--color-canvas));
+    color: rgb(var(--color-ink));
+    font-family: theme('fontFamily.sans');
+    font-weight: 500;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3 { @apply font-display font-extrabold tracking-tight; }
+
+  ::-webkit-scrollbar       { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #000; border-radius: 99px; }
+
+  ::selection { background: rgb(var(--color-accent)); color: #000; }
+
+  * { box-sizing: border-box; }
+}
+
+@layer components {
+  /* Crisp graph-paper grid — pure CSS, no assets */
+  .bg-grid {
+    background-color: rgb(var(--color-canvas));
+    background-image:
+      linear-gradient(rgb(var(--color-accent) / var(--grid-alpha)) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--color-accent) / var(--grid-alpha)) 1px, transparent 1px);
+    background-size: var(--grid-size) var(--grid-size);
+    background-attachment: fixed;
+  }
+
+  /* Ultra-bold headings; use on any element that should look like a title */
+  .font-display {
+    @apply font-extrabold tracking-tight;
+    font-family: theme('fontFamily.display');
+    font-weight: 900;
+  }
+
+  /* ── Buttons ─────────────────────────────────────────────── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-accent text-ink font-display font-extrabold text-sm px-4 py-2.5
+           border-2 border-ink rounded-xl
+           transition-all duration-150 cursor-pointer select-none
+           hover:-translate-y-0.5 hover:shadow-brutal
+           active:translate-y-0 active:shadow-none
+           disabled:opacity-40 disabled:cursor-not-allowed
+           disabled:hover:translate-y-0 disabled:hover:shadow-none;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-surface text-ink font-display font-extrabold text-sm px-4 py-2.5
+           border-2 border-ink rounded-xl
+           transition-all duration-150 cursor-pointer select-none
+           hover:-translate-y-0.5 hover:shadow-brutal
+           active:translate-y-0 active:shadow-none
+           disabled:opacity-40 disabled:cursor-not-allowed
+           disabled:hover:translate-y-0 disabled:hover:shadow-none;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-1.5
+           text-muted hover:text-ink hover:bg-accent
+           border-2 border-transparent hover:border-ink
+           font-bold text-sm px-3 py-2 rounded-xl
+           transition-all duration-150 cursor-pointer select-none
+           disabled:opacity-40 disabled:cursor-not-allowed
+           disabled:hover:bg-transparent disabled:hover:border-transparent disabled:hover:text-muted;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2
+           text-red-700 hover:bg-red-100
+           border-2 border-transparent hover:border-red-700
+           font-bold text-sm px-3 py-2 rounded-xl
+           transition-all duration-150 cursor-pointer select-none;
+  }
+
+  /* ── Cards ───────────────────────────────────────────────── */
+  .card {
+    @apply bg-surface border-2 border-ink rounded-card p-5;
+  }
+
+  .card-accent {
+    @apply card bg-accent;
+  }
+
+  /* Interactive: subtle lift + sharp black offset shadow */
+  .card-hover {
+    @apply transition-all duration-200 cursor-pointer
+           hover:-translate-y-1 hover:shadow-brutal
+           active:translate-y-0 active:shadow-none
+           focus-visible:outline-none focus-visible:-translate-y-1 focus-visible:shadow-brutal;
+  }
+
+  /* ── Inputs ──────────────────────────────────────────────── */
+  .input-base {
+    @apply w-full bg-surface border-2 border-ink rounded-xl px-3 py-2.5
+           text-sm font-medium text-ink placeholder:text-muted
+           focus:outline-none focus:shadow-brutal
+           transition-all duration-150;
+  }
+
+  /* ── Divider ─────────────────────────────────────────────── */
+  .divider { @apply border-t-2 border-ink my-4; }
+
+  /* ── Badge ───────────────────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center gap-1.5 text-xs font-bold
+           px-2.5 py-1 rounded-full border-2 border-ink;
+  }
+  .badge-live    { @apply badge bg-accent text-ink; }
+  .badge-ready   { @apply badge bg-surface text-ink; }
+  .badge-offline { @apply badge bg-surface text-muted border-muted; }
+}
